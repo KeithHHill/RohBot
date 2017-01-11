@@ -1,6 +1,5 @@
 import random
 
-drink_rigged = set()
 group_drink_pool = set()
 
 
@@ -26,11 +25,7 @@ def in_there_dog(author):
 
 
 def drink(author):
-    if str(author) in drink_rigged:
-        message = '{} must drink!'.format(author.nick)
-        print(message)
-        return message
-    elif random.randint(1, 5) == 3:
+    if random.randint(1, 5) == 3:
         message = '{} must drink!'.format(author.nick)
         print(message)
         return message
@@ -44,22 +39,6 @@ def three_minutes(author):
     message = '{} has you for three minutes!'.format(author.nick)
     print(message)
     return message
-
-
-def add_drink_rigged(author, message):
-    temp_roles = [x.name for x in author.roles]
-    if 'Super Admin' in temp_roles:
-        message = message.content.split()
-        drink_rigged.add(message[1])
-        print('Added {} to the rigged list.'.format(message[1]))
-
-
-def remove_drink_rigged(author, message):
-    temp_roles = [x.name for x in author.roles]
-    if 'Super Admin' in temp_roles:
-        message = message.content.split()
-        drink_rigged.remove(message[1])
-        print('Removed {} from the rigged list.'.format(message[1]))
 
 
 def join_group_drink(author):
