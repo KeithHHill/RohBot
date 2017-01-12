@@ -44,7 +44,7 @@ def three_minutes(author):
 
 
 def join_group_drink(author, message):
-    channel = str(message.channel)
+    channel = str(message.channel.id)
     group_drink_pool_dict[channel].add(author)
     message = '{} has joined the drinking pool!'.format(author)
     print(message[:-1] + ' in {}.'.format(channel))
@@ -52,15 +52,18 @@ def join_group_drink(author, message):
 
 
 def leave_group_drink(author, message):
-    channel = str(message.channel)
-    group_drink_pool_dict[channel].remove(author)
-    message = '{} has left the drinking pool!'.format(author)
+    channel = str(message.channel.id)
+    try:
+        group_drink_pool_dict[channel].remove(author)
+        message = '{} has left the drinking pool!'.format(author)
+    except Exception:
+        message = '{} is not in the drinking pool!'.format(author)
     print(message[:-1] + ' in {}.'.format(channel))
     return message
 
 
 def clear_group_drink(message):
-    channel = str(message.channel)
+    channel = str(message.channel.id)
     group_drink_pool_dict[channel].clear()
     message = 'The drinking pool has been cleared!'
     print(message[:-1] + ' in {}.'.format(channel))
@@ -69,7 +72,7 @@ def clear_group_drink(message):
 
 def group_drink(message):
     losers = []
-    channel = str(message.channel)
+    channel = str(message.channel.id)
 
     if len(group_drink_pool_dict[channel]) == 0:
         result = "There is no one in the drinking pool!"
