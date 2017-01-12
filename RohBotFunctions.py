@@ -70,14 +70,17 @@ def clear_group_drink(message):
 def group_drink(message):
     losers = []
     channel = str(message.channel)
+
     if len(group_drink_pool_dict[channel]) == 0:
         result = "There is no one in the drinking pool!"
         print(result)
         return result
+
     for i in group_drink_pool_dict[channel]:
         outcome = random.randint(1, 5)
         if outcome == ((i + 1) % 5):
             losers.append(str(i))
+
     if len(losers) == 2:
         result = '{} and {} are the big losers and have to drink!'.format(losers[0], losers[1])
     elif len(losers) == 1:
