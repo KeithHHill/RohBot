@@ -121,7 +121,7 @@ def help_command():
              '!leavepool       removes you from the group drinking pool\n' \
              '!clearpool        clears everyone out of the group drinking pool\n' \
              '!gdrink             everyone in the group drinking pool has 20% to drink\n' \
-             '!nsfw               links random nsfw reddit thread\n'
+             '!nsfw                links random nsfw reddit thread\n'
     return result
 
 
