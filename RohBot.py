@@ -1,6 +1,7 @@
 import discord
 
-from rohbot import RohBotFunctions as RBF, DiscordBotKey
+import DiscordBotKey
+import RohBotFunctions as RBF
 
 client = discord.Client()
 
