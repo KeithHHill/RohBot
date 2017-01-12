@@ -38,6 +38,8 @@ async def on_message(message):
         await client.send_message(message.channel, RBF.clear_group_drink(message))
     elif message.content.startswith('!gdrink'):
         await client.send_message(message.channel, RBF.group_drink(message))
+    elif message.content.startswith('!nsfw'):
+        await client.send_message(message.channel, '<https://www.reddit.com/r/randnsfw>')
 
 
 client.run(DiscordBotKey.KEY)
