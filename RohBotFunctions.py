@@ -1,4 +1,3 @@
-
 import random
 from collections import defaultdict
 
@@ -8,37 +7,37 @@ group_drink_pool_dict = defaultdict(set)
 def flip_coin(author):
     side = random.randint(0, 1)
     side = 'heads' if side == 0 else 'tails'
-    outcome = '{}\'s coin landed on {}.'.format(author.nick, side)
+    outcome = '{}\'s coin landed on {}.'.format(nickname_check(author), side)
     print(outcome)
     return outcome
 
 
 def roll_die(author):
     side = random.randint(1, 6)
-    outcome = '{} rolls a {}.'.format(author.nick, side)
+    outcome = '{} rolls a {}.'.format(author, side)
     print(outcome)
     return outcome
 
 
 def in_there_dog(author):
-    message = '{} is in there dog!'.format(author.nick)
+    message = '{} is in there dog!'.format(author)
     print(message)
     return message
 
 
 def drink(author):
     if random.randint(1, 5) == 3:
-        message = '{} must drink!'.format(author.nick)
+        message = '{} must drink!'.format(author)
         print(message)
         return message
     else:
-        message = '{} lucked out this time!'.format(author.nick)
+        message = '{} lucked out this time!'.format(author)
         print(message)
         return message
 
 
 def three_minutes(author):
-    message = '{} has you for three minutes!'.format(author.nick)
+    message = '{} has you for three minutes!'.format(author)
     print(message)
     return message
 
@@ -106,16 +105,26 @@ def group_drink(message):
     print(result[:-1] + ' in {}.'.format(channel))
     return result
 
+
 def help_command():
-    result = 'Commands:\n' \
+    result = '\n' \
+             'Commands:\n' \
              '-------------------------\n' \
-             '!flip        flips a coin\n' \
-             '!roll        rolls a 6-sided die\n' \
-             '!inthere     says you\'re in there dog\n' \
-             '!3min        RohBot has you for 3 minutes\n' \
-             '!drink       20% chance you have to drink\n' \
-             '!joinpool    adds you to the pool for group drinking\n' \
-             '!leavepool   removes you from the group drinking pool\n' \
-             '!clearpool   clears everyone out of the group drinking pool\n' \
-             '!gdrink      everyone in the group drinking pool has 20% to drink\n'
+             '!flip                 flips a coin\n' \
+             '!roll                 rolls a 6-sided die\n' \
+             '!inthere          says you\'re in there dog\n' \
+             '!3min              RohBot has you for 3 minutes\n' \
+             '!drink              20% chance you have to drink\n' \
+             '!joinpool         adds you to the pool for group drinking\n' \
+             '!leavepool      removes you from the group drinking pool\n' \
+             '!clearpool       clears everyone out of the group drinking pool\n' \
+             '!gdrink             everyone in the group drinking pool has 20% to drink\n'
     return result
+
+
+def nickname_check(author):
+    if str(author.nick) == "None":
+        name_split = str(author).split('#')
+        return name_split[0]
+    else:
+        return author.nick
