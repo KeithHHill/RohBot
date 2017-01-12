@@ -1,6 +1,5 @@
 import random
 from collections import defaultdict
-import discord
 
 group_drink_pool_dict = defaultdict(set)
 
