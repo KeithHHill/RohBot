@@ -28,13 +28,13 @@ async def on_message(message):
     elif message.content.startswith('!3min'):
         await client.send_message(message.channel, RBF.three_minutes(author), tts=True)
     elif message.content.startswith('!joinpool'):
-        await client.send_message(message.channel, RBF.join_group_drink(author))
+        await client.send_message(message.channel, RBF.join_group_drink(author, message))
     elif message.content.startswith('!leavepool'):
-        await client.send_message(message.channel, RBF.leave_group_drink(author))
+        await client.send_message(message.channel, RBF.leave_group_drink(author, message))
     elif message.content.startswith('!clearpool'):
-        await client.send_message(message.channel, RBF.clear_group_drink())
+        await client.send_message(message.channel, RBF.clear_group_drink(message))
     elif message.content.startswith('!gdrink'):
-        await client.send_message(message.channel, RBF.group_drink(), tts=True)
+        await client.send_message(message.channel, RBF.group_drink(message), tts=True)
 
 
 client.run(DiscordBotKey.KEY)
