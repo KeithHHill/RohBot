@@ -27,10 +27,6 @@ async def on_message(message):
         await client.send_message(message.channel, RBF.drink(author), tts=True)
     elif message.content.startswith('!3min'):
         await client.send_message(message.channel, RBF.three_minutes(author), tts=True)
-    elif message.content.startswith('!adddr'):
-        add_drink_rigged(author, message)
-    elif message.content.startswith('!remdr'):
-        remove_drink_rigged(author, message)
     elif message.content.startswith('!joinpool'):
         await client.send_message(message.channel, RBF.join_group_drink(author))
     elif message.content.startswith('!leavepool'):
