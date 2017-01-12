@@ -25,11 +25,11 @@ async def on_message(message):
     elif message.content.startswith('!roll'):
         await client.send_message(message.channel, RBF.roll_die(author))
     elif message.content.startswith('!inthere'):
-        await client.send_message(message.channel, RBF.in_there_dog(author), tts=True)
+        await client.send_message(message.channel, RBF.in_there_dog(author))
     elif message.content.startswith('!drink'):
-        await client.send_message(message.channel, RBF.drink(author), tts=True)
+        await client.send_message(message.channel, RBF.drink(author))
     elif message.content.startswith('!3min'):
-        await client.send_message(message.channel, RBF.three_minutes(author), tts=True)
+        await client.send_message(message.channel, RBF.three_minutes(author))
     elif message.content.startswith('!joinpool'):
         await client.send_message(message.channel, RBF.join_group_drink(author, message))
     elif message.content.startswith('!leavepool'):
@@ -37,7 +37,7 @@ async def on_message(message):
     elif message.content.startswith('!clearpool'):
         await client.send_message(message.channel, RBF.clear_group_drink(message))
     elif message.content.startswith('!gdrink'):
-        await client.send_message(message.channel, RBF.group_drink(message), tts=True)
+        await client.send_message(message.channel, RBF.group_drink(message))
 
 
 client.run(DiscordBotKey.KEY)
