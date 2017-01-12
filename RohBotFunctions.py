@@ -1,5 +1,6 @@
 import random
 from collections import defaultdict
+import discord
 
 group_drink_pool_dict = defaultdict(set)
 
@@ -14,38 +15,38 @@ def flip_coin(author):
 
 def roll_die(author):
     side = random.randint(1, 6)
-    outcome = '{} rolls a {}.'.format(author, side)
+    outcome = '{} rolls a {}.'.format(nickname_check(author), side)
     print(outcome)
     return outcome
 
 
 def in_there_dog(author):
-    message = '{} is in there dog!'.format(author)
+    message = '{} is in there dog!'.format(nickname_check(author))
     print(message)
     return message
 
 
 def drink(author):
-    if random.randint(1, 5) == 3:
-        message = '{} must drink!'.format(author)
+    if random.randint(1, 100) <= 20:
+        message = '{} must drink!'.format(nickname_check(author))
         print(message)
         return message
     else:
-        message = '{} lucked out this time!'.format(author)
+        message = '{} lucked out this time!'.format(nickname_check(author))
         print(message)
         return message
 
 
 def three_minutes(author):
-    message = '{} has you for three minutes!'.format(author)
+    message = '{} has you for three minutes!'.format(nickname_check(author))
     print(message)
     return message
 
 
 def join_group_drink(author, message):
     channel = str(message.channel.id)
-    group_drink_pool_dict[channel].add(author)
-    message = '{} has joined the drinking pool!'.format(author)
+    group_drink_pool_dict[channel].add(author.id)
+    message = '{} has joined the drinking pool!'.format(nickname_check(author))
     print(message[:-1] + ' in {}.'.format(channel))
     return message
 
@@ -53,10 +54,10 @@ def join_group_drink(author, message):
 def leave_group_drink(author, message):
     channel = str(message.channel.id)
     try:
-        group_drink_pool_dict[channel].remove(author)
-        message = '{} has left the drinking pool!'.format(author)
+        group_drink_pool_dict[channel].remove(author.id)
+        message = '{} has left the drinking pool!'.format(nickname_check(author))
     except Exception:
-        message = '{} is not in the drinking pool!'.format(author)
+        message = '{} is not in the drinking pool!'.format(nickname_check(author))
     print(message[:-1] + ' in {}.'.format(channel))
     return message
 
@@ -79,27 +80,29 @@ def group_drink(message):
         return result
 
     for i in group_drink_pool_dict[channel]:
-        outcome = random.randint(1, 5)
-        if outcome == ((i + 1) % 5):
-            losers.append(str(i))
+        outcome = random.randint(1, 100)
+        if outcome <= 20:
+            losers.append(i)
 
     if len(losers) == 2:
-        result = '{} and {} are the big losers and have to drink!'.format(losers[0], losers[1])
+        result = '{} and {} are the big losers and have to drink!' \
+            .format(nickname_check(message.server.get_member(losers[0])),
+                    nickname_check(message.server.get_member(losers[1])))
     elif len(losers) == 1:
-        result = ' is the big loser and has to drink!'.format(losers[0])
+        result = '{} is the big loser and has to drink!'.format(nickname_check(message.server.get_member(losers[0])))
     elif len(losers) == 0:
         result = 'You lucky fuckers, sobriety wins again.'
     else:
         names = str()
         for i in range(len(losers)):
             if i < len(losers):
-                names += losers[i]
+                names += nickname_check(message.server.get_member(losers[i]))
                 if len(losers) - 1 == i:
                     names += " "
                 else:
                     names += ", "
             else:
-                names = names + "and " + str(losers[i])
+                names = names + ", and " + nickname_check(message.server.get_member(losers[0]))
         result = names + "are the big losers and have to drink!"
 
     print(result[:-1] + ' in {}.'.format(channel))
