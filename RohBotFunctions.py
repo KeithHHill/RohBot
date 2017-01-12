@@ -78,24 +78,24 @@ def group_drink(message):
         outcome = random.randint(1, 5)
         if outcome == 3:
             losers.append(str(i))
-    if len(losers) == 0:
+    if len(losers) == 2:
+        result = '{} and {} are the big losers and have to drink!'.format(losers[0], losers[1])
+    elif len(losers) == 1:
+        result = ' is the big loser and has to drink!'.format(losers[0])
+    elif len(losers) == 0:
         result = 'You lucky fuckers, sobriety wins again.'
-        print(result)
-        return result
-    names = str()
-    for i in range(len(losers)):
-        if len(losers) == 1:
-            names = str(losers[i])
-        elif i < len(losers):
-            names += str(losers[i])
-            if len(losers) - 1 == i:
-                names += " "
+    else:
+        names = str()
+        for i in range(len(losers)):
+            if i < len(losers):
+                names += losers[i]
+                if len(losers) - 1 == i:
+                    names += " "
+                else:
+                    names += ", "
             else:
-                names += ", "
-        else:
-            names = names + "and " + str(losers[i])
-    result = names + "are the big losers and have to drink!"
-    if len(losers) == 1:
-        result = names + " is the big loser and has to drink!"
-    print(result)
+                names = names + "and " + str(losers[i])
+        result = names + "are the big losers and have to drink!"
+
+    print(result[:-1] + ' in {}.'.format(channel))
     return result
