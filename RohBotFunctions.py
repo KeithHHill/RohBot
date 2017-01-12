@@ -105,3 +105,17 @@ def group_drink(message):
 
     print(result[:-1] + ' in {}.'.format(channel))
     return result
+
+def help_command():
+    result = 'Commands:\n' \
+             '-------------------------\n' \
+             '!flip        flips a coin\n' \
+             '!roll        rolls a 6-sided die\n' \
+             '!inthere     says you\'re in there dog\n' \
+             '!3min        RohBot has you for 3 minutes\n' \
+             '!drink       20% chance you have to drink\n' \
+             '!joinpool    adds you to the pool for group drinking\n' \
+             '!leavepool   removes you from the group drinking pool\n' \
+             '!clearpool   clears everyone out of the group drinking pool\n' \
+             '!gdrink      everyone in the group drinking pool has 20% to drink\n'
+    return result

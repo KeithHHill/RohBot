@@ -17,7 +17,10 @@ async def on_ready():
 @client.event
 async def on_message(message):
     author = message.author
-    if message.content.startswith('!flip'):
+
+    if message.content.startswith('!help'):
+        await client.send_message(message.channel, RBF.help_command())
+    elif message.content.startswith('!flip'):
         await client.send_message(message.channel, RBF.flip_coin(author))
     elif message.content.startswith('!roll'):
         await client.send_message(message.channel, RBF.roll_die(author))
