@@ -1,5 +1,7 @@
 import random
 from collections import defaultdict
+import requests
+import json
 
 group_drink_pool_dict = defaultdict(set)
 
@@ -108,6 +110,17 @@ def group_drink(message):
     return result
 
 
+def get_overwatch_gif():
+    url = 'http://api.giphy.com/v1/gifs/random?api_key=dc6zaTOxFJmzC&tag=overwatch'
+    response = requests.get(url)
+    response_dict = json.loads(response.text)
+    image = response_dict['data']['image_url']
+    giphy_logo = 'http://i.imgur.com/FHm35or.png'
+    result = giphy_logo + ' ' + image
+    print('Loaded: ' + result)
+    return result
+
+
 def help_command():
     result = '\n' \
              'Commands:\n' \
@@ -121,7 +134,9 @@ def help_command():
              '!leavepool       removes you from the group drinking pool\n' \
              '!clearpool        clears everyone out of the group drinking pool\n' \
              '!gdrink             everyone in the group drinking pool has 20% to drink\n' \
-             '!nsfw                links random nsfw reddit thread\n'
+             '!nsfw                links random nsfw reddit thread\n' \
+             '!owgif               gets a random overwatch gif from Giphy\n'
+    print('Printed !help')
     return result
 
 

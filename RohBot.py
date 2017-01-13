@@ -40,6 +40,8 @@ async def on_message(message):
         await client.send_message(message.channel, RBF.group_drink(message))
     elif message.content.startswith('!nsfw'):
         await client.send_message(message.channel, '<https://www.reddit.com/r/randnsfw>')
+    elif message.content.startswith('!owgif'):
+        await client.send_message(message.channel, RBF.get_overwatch_gif())
 
 
 client.run(DiscordBotKey.KEY)
