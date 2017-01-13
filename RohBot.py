@@ -1,6 +1,6 @@
 import discord
 
-import DiscordBotKey
+import RohBotConstants
 import RohBotFunctions as RBF
 
 client = discord.Client()
@@ -42,4 +42,4 @@ async def on_message(message):
         await client.send_message(message.channel, '<https://www.reddit.com/r/randnsfw>')
 
 
-client.run(DiscordBotKey.KEY)
+client.run(RohBotConstants.SECRET_KEY)

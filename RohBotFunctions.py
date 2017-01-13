@@ -1,7 +1,5 @@
 import random
 from collections import defaultdict
-import requests
-import json
 
 group_drink_pool_dict = defaultdict(set)
 
