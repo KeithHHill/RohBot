@@ -1,7 +1,7 @@
 import discord
-
 import RohBotConstants
 import RohBotFunctions as RBF
+import UtilityFunctions as UF
 
 client = discord.Client()
 
@@ -12,6 +12,7 @@ async def on_ready():
     print(client.user.name)
     print(client.user.id)
     print('------------------')
+    # UF.sqlite_setup()  # only run this on first startup
 
 
 @client.event
@@ -19,7 +20,7 @@ async def on_message(message):
     author = message.author
 
     if message.content.startswith('!help'):
-        await client.send_message(message.channel, RBF.help_command())
+        await client.send_message(message.channel, RBF.help_command(message))
     elif message.content.startswith('!flip'):
         await client.send_message(message.channel, RBF.flip_coin(author))
     elif message.content.startswith('!roll'):
@@ -40,6 +41,10 @@ async def on_message(message):
         await client.send_message(message.channel, RBF.group_drink(message))
     elif message.content.startswith('!nsfw'):
         await client.send_message(message.channel, '<https://www.reddit.com/r/randnsfw>')
+    elif message.content.startswith('!coins'):
+        await client.send_message(message.channel, RBF.get_rohcoins(author))
+    elif message.content.startswith('!gamble'):
+        await client.send_message(message.channel, RBF.gamble(author, message))
 
 
 client.run(RohBotConstants.SECRET_KEY)
