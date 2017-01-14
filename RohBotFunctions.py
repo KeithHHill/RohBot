@@ -122,7 +122,7 @@ def get_rohcoins(author):
         cursor = conn.execute('INSERT INTO tbl_user(user_id, user_rohcoins) VALUES (?, ?)', args)
         conn.commit()
         conn.close()
-        print('New user, {}, added to database.').format(author)
+        print('New user, {}, added to database.'.format(author))
         return '{} has {} RohCoins.'.format(UF.nickname_check(author), '10')
     else:
         args = (author_id,)
@@ -144,7 +144,10 @@ def gamble(author, message):
         return '{}, use the !coins command to get your starter pack of 10 RohCoins, then try again!' \
             .format(UF.nickname_check(author))
     else:
-        bet = message.content.split()[1]
+        try:
+            bet = message.content.split()[1]
+        except Exception:
+            return 'Please put a space between gamble and your bet!'
         try:
             int(bet)
         except Exception:
