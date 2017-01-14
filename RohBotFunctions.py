@@ -141,6 +141,7 @@ def gamble(author, message):
     cursor = conn.execute('SELECT exists(SELECT * FROM tbl_user WHERE user_id = ?)', args)
     user_check = cursor.fetchone()[0]
     if user_check == 0:
+        conn.close()
         return '{}, use the !coins command to get your starter pack of 10 RohCoins, then try again!' \
             .format(UF.nickname_check(author))
     else:
@@ -156,6 +157,7 @@ def gamble(author, message):
         cursor = conn.execute('SELECT exists(SELECT * FROM tbl_user WHERE user_id = ? AND user_rohcoins >= ?)', args)
         coins_check = cursor.fetchone()[0]
         if coins_check == 0:
+            conn.close()
             return '{}, you don\'t have enough RohCoins for that bet!'.format(UF.nickname_check(author))
         else:
             mod = UF.get_gamble_modifier()
