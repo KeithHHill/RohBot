@@ -115,19 +115,19 @@ def get_rohcoins(author):
     conn = sqlite3.connect('RohBotDB.db')
 
     args = (author_id,)
-    cursor = conn.execute('SELECT exists(SELECT * FROM tbl_user WHERE user_id = ?)', args)
+    cursor = conn.execute('SELECT exists(SELECT * FROM tbl_user_coins WHERE user_id = ?)', args)
     user_check = cursor.fetchone()[0]
     if user_check == 0:
         starter_coins = 20
         args = (author_id, starter_coins)
-        cursor = conn.execute('INSERT INTO tbl_user(user_id, user_rohcoins) VALUES (?, ?)', args)
+        cursor = conn.execute('INSERT INTO tbl_user_coins(user_id, user_rohcoins) VALUES (?, ?)', args)
         conn.commit()
         conn.close()
         print('New user, {}, added to database.'.format(author))
         return '{} has {} RohCoins.'.format(UF.nickname_check(author), starter_coins)
     else:
         args = (author_id,)
-        cursor = conn.execute('SELECT user_rohcoins FROM tbl_user WHERE user_id = ?', args)
+        cursor = conn.execute('SELECT user_rohcoins FROM tbl_user_coins WHERE user_id = ?', args)
         coins = cursor.fetchone()[0]
         conn.close()
         print('{} has {} RohCoins.'.format(author, coins))
@@ -139,7 +139,7 @@ def gamble(author, message):
     conn = sqlite3.connect('RohBotDB.db')
 
     args = (author_id,)
-    cursor = conn.execute('SELECT exists(SELECT * FROM tbl_user WHERE user_id = ?)', args)
+    cursor = conn.execute('SELECT exists(SELECT * FROM tbl_user_coins WHERE user_id = ?)', args)
     user_check = cursor.fetchone()[0]
     if user_check == 0:
         conn.close()
@@ -155,7 +155,7 @@ def gamble(author, message):
         except Exception:
             return 'You must enter an integer!'
         args = (author_id, bet)
-        cursor = conn.execute('SELECT exists(SELECT * FROM tbl_user WHERE user_id = ? AND user_rohcoins >= ?)', args)
+        cursor = conn.execute('SELECT exists(SELECT * FROM tbl_user_coins WHERE user_id = ? AND user_rohcoins >= ?)', args)
         coins_check = cursor.fetchone()[0]
         if coins_check == 0:
             conn.close()
@@ -166,14 +166,14 @@ def gamble(author, message):
             outcome = payout - int(bet)
             if payout == 0:
                 args = (bet, author_id)
-                cursor = conn.execute('UPDATE tbl_user SET user_rohcoins = user_rohcoins - ? WHERE user_id = ?', args)
+                cursor = conn.execute('UPDATE tbl_user_coins SET user_rohcoins = user_rohcoins - ? WHERE user_id = ?', args)
                 conn.commit()
                 conn.close()
                 print('{} lost {} RohCoins.'.format(author, bet))
                 return '{} lost {} RohCoins!'.format(UF.nickname_check(author), bet)
             else:
                 args = (outcome, author_id)
-                cursor = conn.execute('UPDATE tbl_user SET user_rohcoins = user_rohcoins + ? WHERE user_id = ?', args)
+                cursor = conn.execute('UPDATE tbl_user_coins SET user_rohcoins = user_rohcoins + ? WHERE user_id = ?', args)
                 conn.commit()
                 conn.close()
                 print('{} gained {} RohCoins.'.format(author, outcome))
@@ -187,7 +187,7 @@ def add_coins(author, message):
         target = message.server.get_member_named(content[1])
         amount = int(content[2])
         args = (amount, target.id)
-        cursor = conn.execute('UPDATE tbl_user SET user_rohcoins = user_rohcoins + ? WHERE user_id = ?', args)
+        cursor = conn.execute('UPDATE tbl_user_coins SET user_rohcoins = user_rohcoins + ? WHERE user_id = ?', args)
         conn.commit()
         conn.close()
         print('{} coins have been added to {}.'.format(amount, target))
