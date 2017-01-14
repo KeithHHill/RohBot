@@ -118,7 +118,7 @@ def get_rohcoins(author):
     cursor = conn.execute('SELECT exists(SELECT * FROM tbl_user WHERE user_id = ?)', args)
     user_check = cursor.fetchone()[0]
     if user_check == 0:
-        args = (author_id, 10)
+        args = (author_id, 20)
         cursor = conn.execute('INSERT INTO tbl_user(user_id, user_rohcoins) VALUES (?, ?)', args)
         conn.commit()
         conn.close()
