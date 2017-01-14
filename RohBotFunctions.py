@@ -210,6 +210,6 @@ def help_command(message):
              '!gdrink             everyone in the group drinking pool has 20% to drink\n' \
              '!nsfw                links random nsfw reddit thread\n' \
              '!coins               shows how many RohCoins you have\n' \
-             '!gamble X       gamble X of you RohCoins'
+             '!gamble X       gamble X of your RohCoins'
     print('Printed !help on {}'.format(message.channel.id))
     return result
