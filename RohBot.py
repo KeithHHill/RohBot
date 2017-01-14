@@ -49,7 +49,7 @@ async def on_message(message):
     elif message.content.startswith('!nsfw'):
         await client.send_message(message.channel, '<https://www.reddit.com/r/randnsfw>')
     elif message.content.startswith('!coins'):
-        await client.send_message(message.channel, RBF.get_rohcoins(author))
+        await client.send_message(message.channel, RBF.get_rohcoins(author, message))
     elif message.content.startswith('!gamble'):
         await client.send_message(message.channel, RBF.gamble(author, message))
     elif message.content.startswith('!addcoin'):

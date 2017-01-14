@@ -39,6 +39,6 @@ def sqlite_setup():
     conn = sqlite3.connect(db)
     print('Connected to {}.'.format(db))
 
-    conn.execute('CREATE TABLE tbl_user(user_id TEXT PRIMARY KEY NOT NULL, user_rohcoins INT NOT NULL);')
+    conn.execute('CREATE TABLE tbl_user_coins(user_id TEXT NOT NULL, server_id TEXT NOT NULL, user_rohcoins INT NOT NULL, PRIMARY KEY (user_id, server_id))')
     print("Table created.")
     conn.close()

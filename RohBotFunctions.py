@@ -110,24 +110,25 @@ def group_drink(message):
     return result
 
 
-def get_rohcoins(author):
+def get_rohcoins(author, message):
     author_id = author.id
+    server_id = message.server.id
     conn = sqlite3.connect('RohBotDB.db')
 
-    args = (author_id,)
-    cursor = conn.execute('SELECT exists(SELECT * FROM tbl_user_coins WHERE user_id = ?)', args)
+    args = (author_id, server_id)
+    cursor = conn.execute('SELECT exists(SELECT * FROM tbl_user_coins WHERE user_id = ? AND server_id = ?)', args)
     user_check = cursor.fetchone()[0]
     if user_check == 0:
         starter_coins = 20
-        args = (author_id, starter_coins)
-        cursor = conn.execute('INSERT INTO tbl_user_coins(user_id, user_rohcoins) VALUES (?, ?)', args)
+        args = (author_id, server_id, starter_coins)
+        cursor = conn.execute('INSERT INTO tbl_user_coins(user_id, server_id, user_rohcoins) VALUES (?, ?, ?)', args)
         conn.commit()
         conn.close()
         print('New user, {}, added to database.'.format(author))
         return '{} has {} RohCoins.'.format(UF.nickname_check(author), starter_coins)
     else:
-        args = (author_id,)
-        cursor = conn.execute('SELECT user_rohcoins FROM tbl_user_coins WHERE user_id = ?', args)
+        args = (author_id, server_id)
+        cursor = conn.execute('SELECT user_rohcoins FROM tbl_user_coins WHERE user_id = ? AND server_id = ?', args)
         coins = cursor.fetchone()[0]
         conn.close()
         print('{} has {} RohCoins.'.format(author, coins))
@@ -136,10 +137,11 @@ def get_rohcoins(author):
 
 def gamble(author, message):
     author_id = author.id
+    server_id = message.server.id
     conn = sqlite3.connect('RohBotDB.db')
 
-    args = (author_id,)
-    cursor = conn.execute('SELECT exists(SELECT * FROM tbl_user_coins WHERE user_id = ?)', args)
+    args = (author_id, server_id)
+    cursor = conn.execute('SELECT exists(SELECT * FROM tbl_user_coins WHERE user_id = ? AND server_id = ?)', args)
     user_check = cursor.fetchone()[0]
     if user_check == 0:
         conn.close()
@@ -154,8 +156,8 @@ def gamble(author, message):
             int(bet)
         except Exception:
             return 'You must enter an integer!'
-        args = (author_id, bet)
-        cursor = conn.execute('SELECT exists(SELECT * FROM tbl_user_coins WHERE user_id = ? AND user_rohcoins >= ?)', args)
+        args = (author_id, server_id, bet)
+        cursor = conn.execute('SELECT exists(SELECT * FROM tbl_user_coins WHERE user_id = ? AND server_id = ? AND user_rohcoins >= ?)', args)
         coins_check = cursor.fetchone()[0]
         if coins_check == 0:
             conn.close()
@@ -165,15 +167,15 @@ def gamble(author, message):
             payout = int(int(bet) * mod)
             outcome = payout - int(bet)
             if payout == 0:
-                args = (bet, author_id)
-                cursor = conn.execute('UPDATE tbl_user_coins SET user_rohcoins = user_rohcoins - ? WHERE user_id = ?', args)
+                args = (bet, author_id, server_id)
+                cursor = conn.execute('UPDATE tbl_user_coins SET user_rohcoins = user_rohcoins - ? WHERE user_id = ? AND server_id = ?', args)
                 conn.commit()
                 conn.close()
                 print('{} lost {} RohCoins.'.format(author, bet))
                 return '{} lost {} RohCoins!'.format(UF.nickname_check(author), bet)
             else:
-                args = (outcome, author_id)
-                cursor = conn.execute('UPDATE tbl_user_coins SET user_rohcoins = user_rohcoins + ? WHERE user_id = ?', args)
+                args = (outcome, author_id, server_id)
+                cursor = conn.execute('UPDATE tbl_user_coins SET user_rohcoins = user_rohcoins + ? WHERE user_id = ? AND server_id = ?', args)
                 conn.commit()
                 conn.close()
                 print('{} gained {} RohCoins.'.format(author, outcome))
@@ -181,13 +183,14 @@ def gamble(author, message):
 
 
 def add_coins(author, message):
+    server_id = message.server.id
     conn = sqlite3.connect('RohBotDB.db')
     if UF.check_for_max_permissions(author, message.server):
         content = message.content.split()
         target = message.server.get_member_named(content[1])
         amount = int(content[2])
-        args = (amount, target.id)
-        cursor = conn.execute('UPDATE tbl_user_coins SET user_rohcoins = user_rohcoins + ? WHERE user_id = ?', args)
+        args = (amount, target.id, server_id)
+        cursor = conn.execute('UPDATE tbl_user_coins SET user_rohcoins = user_rohcoins + ? WHERE user_id = ? AND server_id = ?', args)
         conn.commit()
         conn.close()
         print('{} coins have been added to {}.'.format(amount, target))
