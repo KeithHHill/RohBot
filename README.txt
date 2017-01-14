@@ -5,5 +5,5 @@ RohBot is a text based bot for the Discord app. It has simple functionality like
 
 ## Notes
 The last line in RohBot.py requires editing to work. Either the DiscordBotKey.KEY can be replaced with your bot secret key or with an equivalent call.
-
+The sql_setup function in RohBot.py only needs to be run on the first startup to create the database and user table.
 # Under Development

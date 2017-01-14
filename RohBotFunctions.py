@@ -118,12 +118,13 @@ def get_rohcoins(author):
     cursor = conn.execute('SELECT exists(SELECT * FROM tbl_user WHERE user_id = ?)', args)
     user_check = cursor.fetchone()[0]
     if user_check == 0:
-        args = (author_id, 20)
+        starter_coins = 20
+        args = (author_id, starter_coins)
         cursor = conn.execute('INSERT INTO tbl_user(user_id, user_rohcoins) VALUES (?, ?)', args)
         conn.commit()
         conn.close()
         print('New user, {}, added to database.'.format(author))
-        return '{} has {} RohCoins.'.format(UF.nickname_check(author), '10')
+        return '{} has {} RohCoins.'.format(UF.nickname_check(author), starter_coins)
     else:
         args = (author_id,)
         cursor = conn.execute('SELECT user_rohcoins FROM tbl_user WHERE user_id = ?', args)
@@ -177,6 +178,22 @@ def gamble(author, message):
                 conn.close()
                 print('{} gained {} RohCoins.'.format(author, outcome))
                 return '{} gained {} RohCoins!'.format(UF.nickname_check(author), outcome)
+
+
+def add_coins(author, message):
+    conn = sqlite3.connect('RohBotDB.db')
+    if UF.check_for_max_permissions(author, message.server):
+        content = message.content.split()
+        target = message.server.get_member_named(content[1])
+        amount = int(content[2])
+        args = (amount, target.id)
+        cursor = conn.execute('UPDATE tbl_user SET user_rohcoins = user_rohcoins + ? WHERE user_id = ?', args)
+        conn.commit()
+        conn.close()
+        print('{} coins have been added to {}.'.format(amount, target))
+        return '{} coins have been added to {}.'.format(amount, UF.nickname_check(target))
+    else:
+        return 'You do not have the correct permissions for this action.'
 
 
 def help_command(message):

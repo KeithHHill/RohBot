@@ -25,6 +25,15 @@ def get_gamble_modifier():
     return modifier
 
 
+def check_for_max_permissions(member, server):
+    max_role = server.role_hierarchy[0]
+    member_max_role = member.top_role
+    if max_role == member_max_role:
+        return True
+    else:
+        return False
+
+
 def sqlite_setup():
     db = 'RohBotDB.db'
     conn = sqlite3.connect(db)
