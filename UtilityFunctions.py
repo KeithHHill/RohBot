@@ -1,6 +1,7 @@
 import random
 import sqlite3
 import requests
+import time
 
 
 def nickname_check(author):
@@ -39,6 +40,10 @@ def get_json(url):
     response = requests.get(url)
     json = response.json()
     return json
+
+
+def get_seconds_time():
+    return int(time.time())
 
 
 def sqlite_setup():

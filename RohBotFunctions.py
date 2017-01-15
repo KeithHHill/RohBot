@@ -1,9 +1,12 @@
 import random
 import sqlite3
+import html
 import UtilityFunctions as UF
 from collections import defaultdict
 
 group_drink_pool_dict = defaultdict(set)
+active_trivia_dict = defaultdict()
+active_trivia_question_dict = defaultdict()
 
 
 def flip_coin(author):
@@ -157,7 +160,9 @@ def gamble(author, message):
         except Exception:
             return 'You must enter an integer!'
         args = (author_id, server_id, bet)
-        cursor = conn.execute('SELECT exists(SELECT * FROM tbl_user_coins WHERE user_id = ? AND server_id = ? AND user_rohcoins >= ?)', args)
+        cursor = conn.execute(
+            'SELECT exists(SELECT * FROM tbl_user_coins WHERE user_id = ? AND server_id = ? AND user_rohcoins >= ?)',
+            args)
         coins_check = cursor.fetchone()[0]
         if coins_check == 0:
             conn.close()
@@ -168,21 +173,25 @@ def gamble(author, message):
             outcome = payout - int(bet)
             if payout == 0:
                 args = (bet, author_id, server_id)
-                cursor = conn.execute('UPDATE tbl_user_coins SET user_rohcoins = user_rohcoins - ? WHERE user_id = ? AND server_id = ?', args)
+                cursor = conn.execute(
+                    'UPDATE tbl_user_coins SET user_rohcoins = user_rohcoins - ? WHERE user_id = ? AND server_id = ?',
+                    args)
                 conn.commit()
                 conn.close()
                 print('{} lost {} RohCoins.'.format(author, bet))
                 return '{} lost {} RohCoins!'.format(UF.nickname_check(author), bet)
             else:
                 args = (outcome, author_id, server_id)
-                cursor = conn.execute('UPDATE tbl_user_coins SET user_rohcoins = user_rohcoins + ? WHERE user_id = ? AND server_id = ?', args)
+                cursor = conn.execute(
+                    'UPDATE tbl_user_coins SET user_rohcoins = user_rohcoins + ? WHERE user_id = ? AND server_id = ?',
+                    args)
                 conn.commit()
                 conn.close()
                 print('{} gained {} RohCoins.'.format(author, outcome))
                 return '{} gained {} RohCoins!'.format(UF.nickname_check(author), outcome)
 
 
-def add_coins(author, message):
+def add_coins_command(author, message):
     server_id = message.server.id
     conn = sqlite3.connect('RohBotDB.db')
     if UF.check_for_max_permissions(author, message.server):
@@ -190,7 +199,8 @@ def add_coins(author, message):
         target = message.server.get_member_named(content[1])
         amount = int(content[2])
         args = (amount, target.id, server_id)
-        cursor = conn.execute('UPDATE tbl_user_coins SET user_rohcoins = user_rohcoins + ? WHERE user_id = ? AND server_id = ?', args)
+        cursor = conn.execute(
+            'UPDATE tbl_user_coins SET user_rohcoins = user_rohcoins + ? WHERE user_id = ? AND server_id = ?', args)
         conn.commit()
         conn.close()
         print('{} coins have been added to {}.'.format(amount, target))
@@ -199,20 +209,89 @@ def add_coins(author, message):
         return 'You do not have the correct permissions for this action.'
 
 
+def add_coins(user_id, server_id, amount):
+    conn = sqlite3.connect('RohBotDB.db')
+    args = (amount, user_id, server_id)
+    cursor = conn.execute(
+        'UPDATE tbl_user_coins SET user_rohcoins = user_rohcoins + ? WHERE user_id = ? AND server_id = ?', args)
+    conn.commit()
+    conn.close()
+
+
+def get_trivia_question(message):
+    trivia_dict = UF.get_json('https://opentdb.com/api.php?amount=1&type=multiple')
+    difficulty = trivia_dict['results'][0]['difficulty']
+    question = html.unescape(trivia_dict['results'][0]['question'])
+    correct_answer = html.unescape(trivia_dict['results'][0]['correct_answer'])
+    possible_answers = html.unescape(trivia_dict['results'][0]['incorrect_answers'])
+    insert_at = random.randint(0, 3)
+    possible_answers.insert(insert_at, correct_answer)
+    result = 'This is a(n) {} difficulty question. \n{} \nAnswer Choices:\n1. {}\n2. {}\n3. {}\n4. {}'\
+        .format(difficulty, question, possible_answers[0], possible_answers[1], possible_answers[2], possible_answers[3])
+    ch_id = message.channel.id
+    active_trivia_dict[ch_id] = True
+    print('Question opened on {}'.format(ch_id))
+    active_trivia_question_dict[ch_id] = {'difficulty': difficulty, 'question': question,
+                                          'correct_answer': insert_at + 1, 'time': UF.get_seconds_time()}
+    print(result)
+    return result
+
+
+def answer_question(author, message):
+    user_id = author.id
+    ch_id = message.channel.id
+    server_id = message.server.id
+    answer_time = UF.get_seconds_time() - active_trivia_question_dict[ch_id]['time']
+    incoming_answer = int(message.content.split()[1])
+
+    if active_trivia_dict[ch_id]:
+        if answer_time > 30:
+            active_trivia_dict[ch_id] = False
+            print('Question answered in {} seconds.'.format(answer_time))
+            print('Question closed on {}'.format(ch_id))
+            return 'You answered too late, the correct answer was {}. You only have 15 seconds to answer!'\
+                .format(active_trivia_question_dict[ch_id]['correct_answer'])
+        else:
+            if active_trivia_question_dict[ch_id]['correct_answer'] == incoming_answer:
+                if active_trivia_question_dict[ch_id]['difficulty'] == 'hard':
+                    reward = 15
+                elif active_trivia_question_dict[ch_id]['difficulty'] == 'medium':
+                    reward = 10
+                else:
+                    reward = 5
+                add_coins(user_id, server_id, reward)
+                print('{} received {} coins.'.format(author, reward))
+                print('Question answered in {} seconds.'.format(answer_time))
+                print('Question closed on {}'.format(ch_id))
+                return '{}, that\'s correct! You receive {} coins as a reward!'.format(UF.nickname_check(author), reward)
+            else:
+                active_trivia_dict[ch_id] = False
+                print('Question answered in {} seconds.'.format(answer_time))
+                print('Question closed on {}'.format(ch_id))
+                return '{}, that answer is incorrect. The correct answer was {}.'\
+                    .format(UF.nickname_check(author), active_trivia_question_dict[ch_id]['correct_answer'])
+    else:
+        return 'There is no active trivia question in this channel.'
+
+
 def help_command(message):
-    result = 'Commands:\n' \
-             '-------------------------\n' \
-             '!flip                  flips a coin\n' \
-             '!roll                  rolls a 6-sided die\n' \
-             '!inthere           says you\'re in there dog\n' \
-             '!3min               RohBot has you for 3 minutes\n' \
-             '!drink               20% chance you have to drink\n' \
-             '!joinpool          adds you to the pool for group drinking\n' \
-             '!leavepool       removes you from the group drinking pool\n' \
-             '!clearpool        clears everyone out of the group drinking pool\n' \
-             '!gdrink             everyone in the group drinking pool has 20% to drink\n' \
-             '!nsfw                links random nsfw reddit thread\n' \
-             '!coins               shows how many RohCoins you have\n' \
-             '!gamble X       gamble X of your RohCoins'
+    result = 'RohBot Commands:\n' \
+             'Use !coins command to get your free coins and to be added to the database!\n' \
+             '---------------------------------------------------------------------------------------\n' \
+             '!flip                     flips a coin\n' \
+             '!roll                     rolls a 6-sided die\n' \
+             '!inthere              says you\'re in there dog\n' \
+             '!3min                  RohBot has you for 3 minutes\n' \
+             '!drink                  20% chance you have to drink\n' \
+             '!joinpool             adds you to the pool for group drinking\n' \
+             '!leavepool          removes you from the group drinking pool\n' \
+             '!clearpool           clears everyone out of the group drinking pool\n' \
+             '!gdrink                everyone in the group drinking pool has 20% to drink\n' \
+             '!nsfw                   links random nsfw reddit thread\n' \
+             '!coins                  shows how many RohCoins you have\n' \
+             '!gamble X          gamble X of your RohCoins\n' \
+             '!addcoins X Y   X is the user Name#0000, Y is the amount, requires admin\n' \
+             '!trivia                  a trivia question with 30 seconds to answer\n' \
+             '!answer X          answers the trivia question where X is the answer choice'
     print('Printed !help on {}'.format(message.channel.id))
     return result
