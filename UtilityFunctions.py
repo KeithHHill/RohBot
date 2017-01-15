@@ -1,5 +1,6 @@
 import random
 import sqlite3
+import requests
 
 
 def nickname_check(author):
@@ -32,6 +33,12 @@ def check_for_max_permissions(member, server):
         return True
     else:
         return False
+
+
+def get_json(url):
+    response = requests.get(url)
+    json = response.json()
+    return json
 
 
 def sqlite_setup():
