@@ -12,7 +12,7 @@ async def on_ready():
     print(client.user.name)
     print(client.user.id)
     print('------------------')
-    # UF.sqlite_setup()  # only run this on first startup
+    UF.sqlite_setup()  # only run this on first startup
 
 
 @client.event
@@ -48,9 +48,9 @@ async def on_message(message):
     elif message.content.startswith('!addcoins'):
         await client.send_message(message.channel, RBF.add_coins_command(author, message))
     elif message.content.startswith('!trivia'):
-        await client.send_message(message.channel, RBF.get_trivia_question(message))
+        await client.send_message(message.channel, RBF.get_trivia_question(author, message))
     elif message.content.startswith('!answer'):
         await client.send_message(message.channel, RBF.answer_question(author, message))
 
 
-client.run(RohBotConstants.PROD_SECRET_KEY)
+client.run(RohBotConstants.DEV_SECRET_KEY)
