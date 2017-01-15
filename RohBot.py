@@ -13,13 +13,6 @@ async def on_ready():
     print(client.user.id)
     print('------------------')
     # UF.sqlite_setup()  # only run this on first startup
-    for s in client.servers:
-        for ch in s.channels:
-            if ch.type == discord.ChannelType.text:
-                try:
-                    await client.send_message(ch, 'RohBot is Online.')
-                except Exception:
-                    print('No permission to {}'.format(ch.id))
 
 
 @client.event
