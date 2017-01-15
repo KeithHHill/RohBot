@@ -49,4 +49,4 @@ async def on_message(message):
         await client.send_message(message.channel, RBF.add_coins(author, message))
 
 
-client.run(RohBotConstants.SECRET_KEY)
+client.run(RohBotConstants.PRODUCTION_SECRET_KEY)
