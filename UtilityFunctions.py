@@ -55,6 +55,23 @@ def add_coins(user_id, server_id, amount):
     conn.close()
 
 
+def new_user_setup(author, message):
+    author_id = author.id
+    server_id = message.server.id
+    conn = sqlite3.connect('RohBotDB.db')
+
+    args = (author_id, server_id)
+    cursor = conn.execute('SELECT exists(SELECT * FROM tbl_user_coins WHERE user_id = ? AND server_id = ?)', args)
+    user_check = cursor.fetchone()[0]
+    if user_check == 0:
+        starter_coins = 20
+        args = (author_id, server_id, starter_coins)
+        cursor = conn.execute('INSERT INTO tbl_user_coins(user_id, server_id, user_rohcoins) VALUES (?, ?, ?)', args)
+        conn.commit()
+        conn.close()
+        print('New user, {}, added to database.'.format(author))
+
+
 def sqlite_setup():
     db = 'RohBotDB.db'
     conn = sqlite3.connect(db)
