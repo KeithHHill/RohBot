@@ -209,15 +209,6 @@ def add_coins_command(author, message):
         return 'You do not have the correct permissions for this action.'
 
 
-def add_coins(user_id, server_id, amount):
-    conn = sqlite3.connect('RohBotDB.db')
-    args = (amount, user_id, server_id)
-    cursor = conn.execute(
-        'UPDATE tbl_user_coins SET user_rohcoins = user_rohcoins + ? WHERE user_id = ? AND server_id = ?', args)
-    conn.commit()
-    conn.close()
-
-
 def get_trivia_question(message):
     ch_id = message.channel.id
     if not active_trivia_dict[ch_id]:
@@ -263,7 +254,7 @@ def answer_question(author, message):
                     reward = 10
                 else:
                     reward = 5
-                add_coins(user_id, server_id, reward)
+                UF.add_coins(user_id, server_id, reward)
                 print('{} received {} coins.'.format(author, reward))
                 active_trivia_dict[ch_id] = False
                 print('Question answered in {} seconds on {}'.format(answer_time, ch_id))

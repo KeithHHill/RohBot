@@ -46,6 +46,15 @@ def get_seconds_time():
     return int(time.time())
 
 
+def add_coins(user_id, server_id, amount):
+    conn = sqlite3.connect('RohBotDB.db')
+    args = (amount, user_id, server_id)
+    cursor = conn.execute(
+        'UPDATE tbl_user_coins SET user_rohcoins = user_rohcoins + ? WHERE user_id = ? AND server_id = ?', args)
+    conn.commit()
+    conn.close()
+
+
 def sqlite_setup():
     db = 'RohBotDB.db'
     conn = sqlite3.connect(db)
