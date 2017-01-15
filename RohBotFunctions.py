@@ -219,22 +219,26 @@ def add_coins(user_id, server_id, amount):
 
 
 def get_trivia_question(message):
-    trivia_dict = UF.get_json('https://opentdb.com/api.php?amount=1&type=multiple')
-    difficulty = trivia_dict['results'][0]['difficulty']
-    question = html.unescape(trivia_dict['results'][0]['question'])
-    correct_answer = html.unescape(trivia_dict['results'][0]['correct_answer'])
-    possible_answers = html.unescape(trivia_dict['results'][0]['incorrect_answers'])
-    insert_at = random.randint(0, 3)
-    possible_answers.insert(insert_at, correct_answer)
-    result = 'This is a(n) {} difficulty question. \n{} \nAnswer Choices:\n1. {}\n2. {}\n3. {}\n4. {}'\
-        .format(difficulty, question, possible_answers[0], possible_answers[1], possible_answers[2], possible_answers[3])
     ch_id = message.channel.id
-    active_trivia_dict[ch_id] = True
-    print('Question opened on {}'.format(ch_id))
-    active_trivia_question_dict[ch_id] = {'difficulty': difficulty, 'question': question,
-                                          'correct_answer': insert_at + 1, 'time': UF.get_seconds_time()}
-    print(result)
-    return result
+    if not active_trivia_dict[ch_id]:
+        trivia_dict = UF.get_json('https://opentdb.com/api.php?amount=1&type=multiple')
+        difficulty = trivia_dict['results'][0]['difficulty']
+        question = html.unescape(trivia_dict['results'][0]['question'])
+        correct_answer = html.unescape(trivia_dict['results'][0]['correct_answer'])
+        possible_answers = html.unescape(trivia_dict['results'][0]['incorrect_answers'])
+        insert_at = random.randint(0, 3)
+        possible_answers.insert(insert_at, correct_answer)
+        result = 'This is a(n) {} difficulty question. \n{} \nAnswer Choices:\n1. {}\n2. {}\n3. {}\n4. {}'\
+            .format(difficulty, question, possible_answers[0], possible_answers[1], possible_answers[2], possible_answers[3])
+        ch_id = message.channel.id
+        active_trivia_dict[ch_id] = True
+        print('Question opened on {}'.format(ch_id))
+        active_trivia_question_dict[ch_id] = {'difficulty': difficulty, 'question': question,
+                                              'correct_answer': insert_at + 1, 'time': UF.get_seconds_time()}
+        return result
+    else:
+        print('Question already open on {}'.format(ch_id))
+        return 'Only one trivia question per channel can be active at a time.'
 
 
 def answer_question(author, message):
