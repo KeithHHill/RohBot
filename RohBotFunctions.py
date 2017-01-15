@@ -117,25 +117,14 @@ def get_rohcoins(author, message):
     author_id = author.id
     server_id = message.server.id
     conn = sqlite3.connect('RohBotDB.db')
-
     args = (author_id, server_id)
-    cursor = conn.execute('SELECT exists(SELECT * FROM tbl_user_coins WHERE user_id = ? AND server_id = ?)', args)
-    user_check = cursor.fetchone()[0]
-    if user_check == 0:
-        starter_coins = 20
-        args = (author_id, server_id, starter_coins)
-        cursor = conn.execute('INSERT INTO tbl_user_coins(user_id, server_id, user_rohcoins) VALUES (?, ?, ?)', args)
-        conn.commit()
-        conn.close()
-        print('New user, {}, added to database.'.format(author))
-        return '{} has {} RohCoins.'.format(UF.nickname_check(author), starter_coins)
-    else:
-        args = (author_id, server_id)
-        cursor = conn.execute('SELECT user_rohcoins FROM tbl_user_coins WHERE user_id = ? AND server_id = ?', args)
-        coins = cursor.fetchone()[0]
-        conn.close()
-        print('{} has {} RohCoins.'.format(author, coins))
-        return '{} has {} RohCoins.'.format(UF.nickname_check(author), coins)
+
+    UF.new_user_setup(author, message)
+    cursor = conn.execute('SELECT user_rohcoins FROM tbl_user_coins WHERE user_id = ? AND server_id = ?', args)
+    coins = cursor.fetchone()[0]
+    conn.close()
+    print('{} has {} RohCoins.'.format(author, coins))
+    return '{} has {} RohCoins.'.format(UF.nickname_check(author), coins)
 
 
 def gamble(author, message):
@@ -143,6 +132,7 @@ def gamble(author, message):
     server_id = message.server.id
     conn = sqlite3.connect('RohBotDB.db')
 
+    UF.new_user_setup(author, message)
     args = (author_id, server_id)
     cursor = conn.execute('SELECT exists(SELECT * FROM tbl_user_coins WHERE user_id = ? AND server_id = ?)', args)
     user_check = cursor.fetchone()[0]
@@ -209,8 +199,9 @@ def add_coins_command(author, message):
         return 'You do not have the correct permissions for this action.'
 
 
-def get_trivia_question(message):
+def get_trivia_question(author, message):
     ch_id = message.channel.id
+    UF.new_user_setup(author, message)
     if not active_trivia_dict[ch_id]:
         trivia_dict = UF.get_json('https://opentdb.com/api.php?amount=1&type=multiple')
         difficulty = trivia_dict['results'][0]['difficulty']
