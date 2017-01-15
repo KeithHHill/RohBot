@@ -5,7 +5,7 @@ import UtilityFunctions as UF
 from collections import defaultdict
 
 group_drink_pool_dict = defaultdict(set)
-active_trivia_dict = defaultdict()
+active_trivia_dict = defaultdict(bool)
 active_trivia_question_dict = defaultdict()
 
 
@@ -251,7 +251,7 @@ def answer_question(author, message):
     if active_trivia_dict[ch_id]:
         if answer_time > 30:
             active_trivia_dict[ch_id] = False
-            print('Question answered in {} seconds.'.format(answer_time))
+            print('Question answered in {} seconds on {}'.format(answer_time, ch_id))
             print('Question closed on {}'.format(ch_id))
             return 'You answered too late, the correct answer was {}. You only have 15 seconds to answer!'\
                 .format(active_trivia_question_dict[ch_id]['correct_answer'])
@@ -265,12 +265,12 @@ def answer_question(author, message):
                     reward = 5
                 add_coins(user_id, server_id, reward)
                 print('{} received {} coins.'.format(author, reward))
-                print('Question answered in {} seconds.'.format(answer_time))
+                print('Question answered in {} seconds on {}'.format(answer_time, ch_id))
                 print('Question closed on {}'.format(ch_id))
                 return '{}, that\'s correct! You receive {} coins as a reward!'.format(UF.nickname_check(author), reward)
             else:
                 active_trivia_dict[ch_id] = False
-                print('Question answered in {} seconds.'.format(answer_time))
+                print('Question answered in {} seconds on {}'.format(answer_time, ch_id))
                 print('Question closed on {}'.format(ch_id))
                 return '{}, that answer is incorrect. The correct answer was {}.'\
                     .format(UF.nickname_check(author), active_trivia_question_dict[ch_id]['correct_answer'])
