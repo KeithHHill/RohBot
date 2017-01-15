@@ -265,6 +265,7 @@ def answer_question(author, message):
                     reward = 5
                 add_coins(user_id, server_id, reward)
                 print('{} received {} coins.'.format(author, reward))
+                active_trivia_dict[ch_id] = False
                 print('Question answered in {} seconds on {}'.format(answer_time, ch_id))
                 print('Question closed on {}'.format(ch_id))
                 return '{}, that\'s correct! You receive {} coins as a reward!'.format(UF.nickname_check(author), reward)
