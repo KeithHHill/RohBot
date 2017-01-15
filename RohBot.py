@@ -45,8 +45,12 @@ async def on_message(message):
         await client.send_message(message.channel, RBF.get_rohcoins(author, message))
     elif message.content.startswith('!gamble'):
         await client.send_message(message.channel, RBF.gamble(author, message))
-    elif message.content.startswith('!addcoin'):
-        await client.send_message(message.channel, RBF.add_coins(author, message))
+    elif message.content.startswith('!addcoins'):
+        await client.send_message(message.channel, RBF.add_coins_command(author, message))
+    elif message.content.startswith('!trivia'):
+        await client.send_message(message.channel, RBF.get_trivia_question(message))
+    elif message.content.startswith('!answer'):
+        await client.send_message(message.channel, RBF.answer_question(author, message))
 
 
-client.run(RohBotConstants.PRODUCTION_SECRET_KEY)
+client.run(RohBotConstants.PROD_SECRET_KEY)
