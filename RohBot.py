@@ -12,7 +12,7 @@ async def on_ready():
     print(client.user.name)
     print(client.user.id)
     print('------------------')
-    UF.sqlite_setup()  # only run this on first startup
+    # UF.sqlite_setup()  # only run this on first startup
 
 
 @client.event
