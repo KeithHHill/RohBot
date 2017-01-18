@@ -53,4 +53,4 @@ async def on_message(message):
         await client.send_message(message.channel, RBF.answer_question(author, message))
 
 
-client.run(RohBotConstants.DEV_SECRET_KEY)
+client.run(RohBotConstants.SECRET_KEY)
