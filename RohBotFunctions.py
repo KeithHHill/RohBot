@@ -279,6 +279,7 @@ def help_command(message):
              '---------------------------------------------------------------------------------------\n' \
              '!flip                     flips a coin\n' \
              '!roll                     rolls a 6-sided die\n' \
+             '!roll XdY            rolls X number of Y-sided dice\n' \
              '!inthere              says you\'re in there dog\n' \
              '!3min                  RohBot has you for 3 minutes\n' \
              '!drink                  20% chance you have to drink\n' \
