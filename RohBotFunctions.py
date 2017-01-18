@@ -17,11 +17,23 @@ def flip_coin(author):
     return outcome
 
 
-def roll_die(author):
-    side = random.randint(1, 6)
-    outcome = '{} rolls a {}.'.format(UF.nickname_check(author), side)
-    print(outcome)
-    return outcome
+def roll_die(author, message):
+    if len(message.content.split()) == 1:
+        side = random.randint(1, 6)
+        outcome = '{} rolls a {}.'.format(UF.nickname_check(author), side)
+        print(outcome)
+        return outcome
+    elif len(message.content.split()) == 2:
+        rolls = []
+        die_number = int(message.content.split()[1].split('d')[0])
+        die_sides = int(message.content.split()[1].split('d')[1])
+        for i in range(die_number):
+            rolls.append(random.randint(1, die_sides))
+            outcome = '{} rolls {}'.format(UF.nickname_check(author), str(rolls).replace('[', '').replace(']', ''))
+        print(outcome)
+        return outcome
+    else:
+        return '{}, you did something wrong.'.format(UF.nickname_check(author))
 
 
 def in_there_dog(author):

@@ -24,7 +24,7 @@ async def on_message(message):
     elif message.content.startswith('!flip'):
         await client.send_message(message.channel, RBF.flip_coin(author))
     elif message.content.startswith('!roll'):
-        await client.send_message(message.channel, RBF.roll_die(author))
+        await client.send_message(message.channel, RBF.roll_die(author, message))
     elif message.content.startswith('!inthere'):
         await client.send_message(message.channel, RBF.in_there_dog(author))
     elif message.content.startswith('!drink'):
