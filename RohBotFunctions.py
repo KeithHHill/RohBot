@@ -218,12 +218,13 @@ def get_trivia_question(author, message):
         trivia_dict = UF.get_json('https://opentdb.com/api.php?amount=1&type=multiple')
         difficulty = trivia_dict['results'][0]['difficulty']
         question = html.unescape(trivia_dict['results'][0]['question'])
-        correct_answer = html.unescape(trivia_dict['results'][0]['correct_answer'])
-        possible_answers = html.unescape(trivia_dict['results'][0]['incorrect_answers'])
+        correct_answer = trivia_dict['results'][0]['correct_answer']
+        possible_answers = trivia_dict['results'][0]['incorrect_answers']
         insert_at = random.randint(0, 3)
         possible_answers.insert(insert_at, correct_answer)
         result = 'This is a(n) {} difficulty question. \n{} \nAnswer Choices:\n1. {}\n2. {}\n3. {}\n4. {}'\
-            .format(difficulty, question, possible_answers[0], possible_answers[1], possible_answers[2], possible_answers[3])
+            .format(difficulty, question, html.unescape(possible_answers[0]), html.unescape(possible_answers[1]),
+                    html.unescape(possible_answers[2]), html.unescape(possible_answers[3]))
         ch_id = message.channel.id
         active_trivia_dict[ch_id] = True
         print('Question opened on {}'.format(ch_id))
@@ -247,7 +248,7 @@ def answer_question(author, message):
             active_trivia_dict[ch_id] = False
             print('Question answered in {} seconds on {}'.format(answer_time, ch_id))
             print('Question closed on {}'.format(ch_id))
-            return 'You answered too late, the correct answer was {}. You only have 15 seconds to answer!'\
+            return 'You answered too late, the correct answer was {}. You only have 30 seconds to answer!'\
                 .format(active_trivia_question_dict[ch_id]['correct_answer'])
         else:
             if active_trivia_question_dict[ch_id]['correct_answer'] == incoming_answer:
